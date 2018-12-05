@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-from apiclient.discovery import build
-from apiclient.errors import HttpError
+from apiclient.__init__.discovery import build
+from apiclient.__init__.errors import HttpError
 from oauth2client.tools import argparser
 import os
 from datetime import datetime
