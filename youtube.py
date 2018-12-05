@@ -5,7 +5,7 @@ from apiclient.errors import HttpError
 from oauth2client.tools import argparser
 import os
 from datetime import datetime
-import sys
+import webbrowser
 
 dt = datetime
 # Set DEVELOPER_KEY to the API key value from the APIs & auth > Registered apps
@@ -43,7 +43,7 @@ def youtube_search(options):
             videos.append("%s (%s)" % (search_result["snippet"]["title"],
                                         search_result["id"]["videoId"]))
 
-    print("Videos:\n", "\n".join(videos))
+    print("Videos:\n"+"\n".join(videos))
 
     fd = os.open("title.txt", os.O_WRONLY | os.O_CREAT)
     file_object = os.fdopen(fd, "a")
@@ -59,32 +59,43 @@ def youtube_search(options):
 def youtube_url(options):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
 
-    videos_title = []
-    videos_id = []
+    web = webbrowser
+
+    videos_url = []
 
     search_response = youtube.search().list(
         q=options.q,
         part="id,snippet",
         maxResults=options.max_results
-    )
+    ).execute()
 
     for search_result in search_response.get("items", []):
         if search_result["id"]["kind"] == "youtube#video":
-            videos_id.append("%s" % (search_result["id"]["videoId"]))
-            videos_title.append("%s" % (search_result["snippet"]["title"]))
+            videos_url.append("%s id:%s" % (search_result["snippet"]["title"],
+                                        search_result["id"]["videoId"]))
 
-    print("어떤 영상으로 가기를 원하십니까?\n\n")
 
-    for i in range(1, 11):
-        print(i+"\t"+videos_title[i]+"\n")
 
-    print("\n번호를 입력해주십시요 : ")
+    print("어떤 영상으로 가기를 원하십니까?\n")
 
-    select_video = input()
+    for i in range(0, 10):
+        print(str(i+1)+"\t"+videos_url[i])
 
+    select_video = input("\n번호를 입력해주십시요 : ")
+    videos_id = videos_url[int(select_video)-1]
+
+    url = "https://www.youtube.com/watch?v="+videos_id.split('id:')[1]
+    print("\n선택한 영상의 url입니다.\n")
+    print(url)
+    try:
+        web.open(url)
+    except HttpError as e:
+        print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
 
 
 if __name__ == "__main__":
+
+    print("환영합니다. \'유튜브 서치\' 입니다.")
 
     #부모 pid를 출력
     print("부모 pid: " + str(os.getpid()))
@@ -92,15 +103,14 @@ if __name__ == "__main__":
     keyword = input("\n검색하고자하는 키워드를 입력하시오 : ")
     print("")
 
+    #pid1에게 자식 프로세스할당
     pid1 = os.fork()
-
-
     if pid1 == 0:
-        print("1번째 자식 %d" % (os.getpid()))
+        print("1번째 자식 pid %d" % (os.getpid()))
 
         argparser.add_argument("--q", help="Search term", default=keyword)
         # 파싱할 제목 수
-        argparser.add_argument("--max-results", help="Max results", default=10)
+        argparser.add_argument("--max-results", help="Max results", default=11)
         args = argparser.parse_args()
 
         try:
@@ -114,20 +124,18 @@ if __name__ == "__main__":
 
     os.waitpid(pid1, 0)
 
-    print("\n\n유튜브 url로 이동하시겠습니까?\n(이동을 원하시면 1, 아니면 0을 입력해주십시요)\n")
+    print("\n\n유튜브 url로 이동하시겠습니까?\n(이동을 원하시면 1, 아니면 0을 입력해주십시요)")
     select = int(input())
 
-    if(select == 1):
+    if select == 1:
         pid2 = os.fork()
         if pid2 == 0:
 
-            print("pid : "+str(os.getpid())+"")
+            print("2번째 자식 pid : "+str(os.getpid())+"")
 
             argparser.add_argument("--q", help="Search term", default=keyword)
-
-            argparser.add_argument("--max-results", help="Max results", default=10)
+            argparser.add_argument("--max-results", help="Max results", default=11)
             args = argparser.parse_args()
-
             try:
                 youtube_url(args)
             except HttpError as e:
@@ -137,6 +145,5 @@ if __name__ == "__main__":
 
         os.waitpid(pid2, 0)
 
-    else:
-        print("프로그램을 종료합니다.")
+    print("프로그램을 종료합니다.")
 
