@@ -12,12 +12,13 @@ dt = datetime
 # tab of
 #   https://cloud.google.com/console
 # Please ensure that you have enabled the YouTube Data API for your project.
+
 # 유튜브 api 개발자 key를 저장합니다.
 DEVELOPER_KEY = "AIzaSyB_oulTx-vylJgWxSCrEi1aEnoyCw1K7WE"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
-# 비디오 타아틀 저장할 배열
+# 비디오 타이틀 저장할 배열
 
 keyword = ""
 
@@ -59,6 +60,7 @@ def youtube_search(options):
 def youtube_url(options):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=DEVELOPER_KEY)
 
+    #webbrowser를 web객체로 생성
     web = webbrowser
 
     videos_url = []
@@ -76,7 +78,7 @@ def youtube_url(options):
 
 
 
-    print("어떤 영상으로 가기를 원하십니까?\n")
+    print("어떤 영상으로 가기를 원하십니까\n")
 
     for i in range(0, 10):
         print(str(i+1)+"\t"+videos_url[i])
@@ -110,7 +112,7 @@ if __name__ == "__main__":
 
         argparser.add_argument("--q", help="Search term", default=keyword)
         # 파싱할 제목 수
-        argparser.add_argument("--max-results", help="Max results", default=11)
+        argparser.add_argument("--max-results", help="Max results", default=10)
         args = argparser.parse_args()
 
         try:
@@ -134,7 +136,7 @@ if __name__ == "__main__":
             print("2번째 자식 pid : "+str(os.getpid())+"")
 
             argparser.add_argument("--q", help="Search term", default=keyword)
-            argparser.add_argument("--max-results", help="Max results", default=11)
+            argparser.add_argument("--max-results", help="Max results", default=10)
             args = argparser.parse_args()
             try:
                 youtube_url(args)
