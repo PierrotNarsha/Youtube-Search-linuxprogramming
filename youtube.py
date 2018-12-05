@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
-from apiclient.__init__.discovery import build
-from apiclient.__init__.errors import HttpError
+from apiclient.discovery import build
+from apiclient.errors import HttpError
 from oauth2client.tools import argparser
 import os
 from datetime import datetime
@@ -80,7 +80,7 @@ def youtube_url(options):
 
     print("어떤 영상으로 가기를 원하십니까\n")
 
-    for i in range(0, 11):
+    for i in range(0, 10):
         print(str(i+1)+"\t"+videos_url[i])
 
     select_video = input("\n번호를 입력해주십시요 : ")
