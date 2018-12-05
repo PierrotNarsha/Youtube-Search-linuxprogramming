@@ -80,7 +80,7 @@ def youtube_url(options):
 
     print("어떤 영상으로 가기를 원하십니까\n")
 
-    for i in range(0, 10):
+    for i in range(0, 11):
         print(str(i+1)+"\t"+videos_url[i])
 
     select_video = input("\n번호를 입력해주십시요 : ")
@@ -112,7 +112,7 @@ if __name__ == "__main__":
 
         argparser.add_argument("--q", help="Search term", default=keyword)
         # 파싱할 제목 수
-        argparser.add_argument("--max-results", help="Max results", default=10)
+        argparser.add_argument("--max-results", help="Max results", default=11)
         args = argparser.parse_args()
 
         try:
@@ -136,7 +136,7 @@ if __name__ == "__main__":
             print("2번째 자식 pid : "+str(os.getpid())+"")
 
             argparser.add_argument("--q", help="Search term", default=keyword)
-            argparser.add_argument("--max-results", help="Max results", default=10)
+            argparser.add_argument("--max-results", help="Max results", default=11)
             args = argparser.parse_args()
             try:
                 youtube_url(args)
